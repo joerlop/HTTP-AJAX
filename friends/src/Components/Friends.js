@@ -7,7 +7,7 @@ function Friends(props) {
   return (
     <div className="Friends">
         {props.friendsList.map(friend => 
-            <Friend friend={friend} />    
+            <Friend friend={friend} delete={props.delete} />    
         )}
     </div>
   );

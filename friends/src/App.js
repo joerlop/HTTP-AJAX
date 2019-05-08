@@ -75,6 +75,17 @@ class App extends React.Component {
     .catch(function (error) {
       console.log(error);
     });
+    const newFriends = this.state.friends;
+    newFriends.push(this.state.friend);
+    this.setState({
+      friends: newFriends,
+      friend: {
+        name: "",
+        age: "",
+        email: ""
+      },
+      id: ""
+    })
   }
 
   handleId = event => {
@@ -89,6 +100,7 @@ class App extends React.Component {
     event.preventDefault();
     const friendsList = this.state.friends;
     const friendToUpdate = friendsList.find(friend => `${friend.id}` === this.state.id);
+    console.log(friendToUpdate);
     const updatedName = this.state.friend.name == "" ? friendToUpdate.name : this.state.friend.name;
     const updatedAge = this.state.friend.age == "" ? friendToUpdate.age : this.state.friend.age;
     const updatedEmail = this.state.friend.email == "" ? friendToUpdate.email : this.state.friend.email;
@@ -121,15 +133,26 @@ class App extends React.Component {
     })
   }
 
+  deleteFriend = (event, id) => {
+    event.preventDefault();
+    axios.delete(`http://localhost:5000/friends/${id}`);
+    console.log(event);
+    const friends = this.state.friends.filter(friend => friend.id !== id);
+    this.setState({
+      ...this.state,
+      friends: friends
+    })
+  }
+
   render() {
     return (
       <div className="App">
-        <Friends friendsList={this.state.friends}/>
+        <Friends friendsList={this.state.friends} delete={this.deleteFriend} />
         <form onSubmit={(e) => this.addFriend(e)}>
             <input placeholder="Name" onChange={(event) => this.handleChanges(event)} value={this.state.friend.name}></input>
             <input placeholder="Age" onChange={(event) => this.handleChanges(event)} value={this.state.friend.age}></input>
             <input placeholder="Email" onChange={(event) => this.handleChanges(event)} value={this.state.friend.email}></input>
-            <input placeholder="Id" onChange={(event) => this.handleId(event)} value={this.state.friend.id}></input>
+            <input placeholder="Id" onChange={(event) => this.handleId(event)} value={this.state.id}></input>
             <button onClick={(e) => this.addFriend(e)}>Save</button>
             <button onClick={(e) => this.updateFriend(e)}>Update</button>
         </form>
